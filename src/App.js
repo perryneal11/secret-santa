@@ -1,14 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import { useState, useEffect } from "react";
+import "./App.css";
+import { SendSecretSanta } from "./sdk/SendSecretSanta.sdk";
 
 function App() {
+  const [message, setMessage] = useState("what?");
+
+  useEffect(() => {
+    SendSecretSanta.hello()
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
+        <p>{message}</p>
         <a
           className="App-link"
           href="https://reactjs.org"

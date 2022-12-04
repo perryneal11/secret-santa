@@ -1,0 +1,9 @@
+name: secret-santa
+sdk:
+  language: js
+  runtime: browser
+  path: ./sdk/
+classes:
+  - path: SendSecretSanta.js
+    type: jsonrpc
+    methods: []
