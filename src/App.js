@@ -11,6 +11,10 @@ import { useState } from "react";
 
 function App() {
   const [attendees, setAttendees] = useState([{ name: "", email: "" }]);
+  const [limit, setLimit] = useState(0)
+  const [initiator, setInitiator] = useState('')
+  const [location, setLocation] = useState('')
+  const [date, setDate] = useState(new Date())
 
   let handleChange = (i, e) => {
     let newFormValues = [...attendees];
@@ -18,6 +22,11 @@ function App() {
     newFormValues[i][e.target.name] = e.target.value;
     setAttendees(newFormValues);
   };
+
+  let handleRangeChange = (e) => {
+    setLimit(e.target.value)
+  }
+
 
   let addFormFields = (e) => {
     e.preventDefault();
@@ -47,25 +56,28 @@ function App() {
       <Form onSubmit={(e) => handleSubmit(e)}>
         <Form.Group className="mb-3" controlId="initiatorName">
           <Form.Label>Initiators Name</Form.Label>
-          <Form.Control type="text" placeholder="Enter your name" />
+          <Form.Control type="text" placeholder="Enter your name" value={initiator} onChange={(e)=> setInitiator(e.target.value)}/>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="eventDate">
           <Form.Label>Date of gift exchange</Form.Label>
-          <Form.Control type="date" />
+          <Form.Control type="date" value={date} onChange={(e)=> setDate(e.target.value)}/>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="eventLocation">
           <Form.Label>location of gift exchange</Form.Label>
-          <Form.Control type="text" />
+          <Form.Control type="text" value={location} onChange={(e)=> setLocation(e.target.value)}/>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="spendingAmount">
           <Form.Label>Maximum amount to spend</Form.Label>
-          <Form.Range />
+          <Form.Text>${limit.toString()}</Form.Text>
+          <Form.Range value={limit} min="20" max = "200" onChange={e => handleRangeChange(e)}/>
         </Form.Group>
-
+        <p>{JSON.stringify(initiator)}</p>
         <p>{JSON.stringify(attendees)}</p>
+        <p>{JSON.stringify(location)}</p>
+        <p>{JSON.stringify(date)}</p>
 
         <Form.Group className="mb-3" controlId="Attendees">
           {attendees.map((attendee, index) => {
