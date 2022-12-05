@@ -1,4 +1,3 @@
-
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
@@ -8,13 +7,14 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useState } from "react";
+import { SendSecretSanta } from "./sdk/SendSecretSanta.sdk";
 
 function App() {
   const [attendees, setAttendees] = useState([{ name: "", email: "" }]);
-  const [limit, setLimit] = useState(0)
-  const [initiator, setInitiator] = useState('')
-  const [location, setLocation] = useState('')
-  const [date, setDate] = useState(new Date())
+  const [limit, setLimit] = useState(0);
+  const [initiator, setInitiator] = useState("");
+  const [location, setLocation] = useState("");
+  const [date, setDate] = useState(new Date());
 
   let handleChange = (i, e) => {
     let newFormValues = [...attendees];
@@ -24,9 +24,8 @@ function App() {
   };
 
   let handleRangeChange = (e) => {
-    setLimit(e.target.value)
-  }
-
+    setLimit(e.target.value);
+  };
 
   let addFormFields = (e) => {
     e.preventDefault();
@@ -42,8 +41,11 @@ function App() {
 
   let handleSubmit = (event) => {
     event.preventDefault();
-    alert(JSON.stringify(attendees));
-}
+    //alert(JSON.stringify(initiator, location, date, limit, attendees));
+    SendSecretSanta.sendInvite(initiator, location, date, limit, attendees)
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
+  };
 
   return (
     <div className="App">
@@ -56,23 +58,41 @@ function App() {
       <Form onSubmit={(e) => handleSubmit(e)}>
         <Form.Group className="mb-3" controlId="initiatorName">
           <Form.Label>Initiators Name</Form.Label>
-          <Form.Control type="text" placeholder="Enter your name" value={initiator} onChange={(e)=> setInitiator(e.target.value)}/>
+          <Form.Control
+            type="text"
+            placeholder="Enter your name"
+            value={initiator}
+            onChange={(e) => setInitiator(e.target.value)}
+          />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="eventDate">
           <Form.Label>Date of gift exchange</Form.Label>
-          <Form.Control type="date" value={date} onChange={(e)=> setDate(e.target.value)}/>
+          <Form.Control
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="eventLocation">
           <Form.Label>location of gift exchange</Form.Label>
-          <Form.Control type="text" value={location} onChange={(e)=> setLocation(e.target.value)}/>
+          <Form.Control
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="spendingAmount">
           <Form.Label>Maximum amount to spend</Form.Label>
           <Form.Text>${limit.toString()}</Form.Text>
-          <Form.Range value={limit} min="20" max = "200" onChange={e => handleRangeChange(e)}/>
+          <Form.Range
+            value={limit}
+            min="20"
+            max="200"
+            onChange={(e) => handleRangeChange(e)}
+          />
         </Form.Group>
         <p>{JSON.stringify(initiator)}</p>
         <p>{JSON.stringify(attendees)}</p>
@@ -89,7 +109,7 @@ function App() {
                   name="name"
                   placeholder="name"
                   defaultValue={attendee.email || ""}
-                  onChange={e => handleChange(index, e)}
+                  onChange={(e) => handleChange(index, e)}
                 />
                 <Form.Control
                   key={index}
@@ -97,7 +117,7 @@ function App() {
                   placeholder="email"
                   name="email"
                   defaultValue={attendee.email || ""}
-                  onChange={e => handleChange(index, e)}
+                  onChange={(e) => handleChange(index, e)}
                 />
                 <Button
                   variant="outline-danger"
@@ -118,7 +138,7 @@ function App() {
           +
         </Button>
 
-        <Button variant="primary" type="submit" >
+        <Button variant="primary" type="submit">
           Submit
         </Button>
       </Form>

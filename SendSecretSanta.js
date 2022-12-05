@@ -1,5 +1,5 @@
 export class SendSecretSanta{
-    hello(){
-        return "santa says hello"
+    sendInvite(initiator, location, date, limit, attendees){
+        return "santa says hello" + initiator + location + date + limit + attendees
     }
 }
