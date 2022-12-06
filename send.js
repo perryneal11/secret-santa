@@ -1,13 +1,10 @@
 import emailjs from "@emailjs/nodejs";
+import EmailJSResponseStatus from "@emailjs/nodejs";
 
 export class send {
-  async invite(initiator, location, date, limit, attendees) {
+  invite(initiator, location, date, limit, attendees) {
+    
     console.log(attendees);
-
-    emailjs.init({
-      publicKey: "CLZD_47ouNXy4XSjV",
-      privateKey: "3V9nSeche-s_X8HCJoug8",
-    });
 
     function shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
@@ -27,34 +24,52 @@ export class send {
       };
     });
 
-    matches.forEach((a) => {
-      var templateParams = {
-        initiator: initiator,
-        location: location,
-        date: date,
-        limit: limit,
-        attendees: attendees,
-        to: a.santa.email,
-      };
-
-      console.log(
-        "emailing " +
-          templateParams.to +
-          " their recipient is " +
-          a.receiver.name
-      );
-
-      emailjs.send("service_u2p4mbv", "template_vnt00kk").then(
-        (response) => {
-          console.log("SUCCESS!", response.status, response.text);
-        },
-        (err) => {
-          console.log("FAILED...", err);
-          return err;
+    async function email(templateParams) {
+      try {
+        await emailjs.send("service_u2p4mbv", "template_vnt00kk", templateParams, {
+          publicKey: "CLZD_47ouNXy4XSjV",
+          privateKey: "3V9nSeche-s_X8HCJoug8", // optional, highly recommended for security reasons
+        });
+        console.log("SUCCESS!");
+      } catch (err) {
+        if (err instanceof EmailJSResponseStatus) {
+          console.log("EMAILJS FAILED...", err);
+          return err
         }
-      );
-    });
+        console.log("ERROR", err);
+      }
+    }
 
-    return "Fin";
+    async function loop(matches) {
+      for(let x =0; x < matches.length; x++) {
+
+        var templateParams = {
+          initiator: initiator,
+          location: location,
+          date: date,
+          limit: limit,
+          attendees: attendees,
+          to: matches[x].santa.email,
+        };
+  
+        console.log(
+          "emailing " +
+            templateParams.to +
+            " their recipient is " +
+            matches[x].receiver.name
+        );
+        
+        await email(templateParams)
+       
+      };
+    }
+    
+
+  
+
+    return loop(matches);
+    
+
+
   }
 }
