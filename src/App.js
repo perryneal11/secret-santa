@@ -7,8 +7,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useState } from "react";
-import emailjs from "@emailjs/browser";
-import { SendSecretSantaInvite } from "./sdk/SendSecretSantaInvite.sdk";
+import { send } from "./sdk/send.sdk";
 
 function App() {
   const [attendees, setAttendees] = useState([
@@ -44,59 +43,19 @@ function App() {
     setAttendees(newFormValues);
   };
 
-  let sendInvites = (initiator, location, date, limit, result) => {
-    console.log(result.type);
-    result.forEach((a) => {
-      var templateParams = {
-        initiator: initiator,
-        location: location,
-        date: date,
-        limit: limit,
-        attendees: attendees,
-        to: a.santa.email,
-      };
-
-      console.log(
-        "emailing" +
-          templateParams.to +
-          " their recipient is " +
-          a.receiver.name
-      );
-
-      emailjs
-        .send(
-          "service_u2p4mbv",
-          "template_vnt00kk",
-          templateParams,
-          "CLZD_47ouNXy4XSjV"
-        )
-        .then(
-          (result) => {
-            console.log(result.text);
-          },
-          (error) => {
-            console.log(error.text);
-          }
-        );
-    });
-  };
-
-  let handleSubmit = async (event) => {
+  let handleSubmit = (event) => {
     event.preventDefault();
-    await SendSecretSantaInvite.sendInvite(attendees)
-      .then((result) => sendInvites(initiator, location, date, limit, result))
-      .catch((error) => {
-        console.log(error);
-      });
+    send.invite(initiator, location, date, limit, attendees).then((result) => console.log(result)).catch(error => console.log(error))
   };
 
   return (
     <div className="App">
       <Container>
-        <Row><h1>Secret Santa Creator</h1></Row>
+        <Row>
+          <h1>Secret Santa Creator</h1>
+        </Row>
         <Row>
           <Col>
-            {" "}
             <Form onSubmit={(e) => handleSubmit(e)}>
               <Form.Group className="mb-3" controlId="initiatorName">
                 <Form.Label>Initiators Name</Form.Label>
@@ -170,7 +129,6 @@ function App() {
                       ) : (
                         <Button
                           variant="outline-danger"
-                          type="submit"
                           onClick={(e) => removeFormFields(index, e)}
                         >
                           Remove
@@ -187,15 +145,13 @@ function App() {
                   +
                 </Button>
               </Form.Group>
+              <Button variant="primary" type="submit">
+                Submit
+              </Button>
             </Form>
           </Col>
         </Row>
-        <Row>
-          {" "}
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
-        </Row>
+        <Row></Row>
       </Container>
     </div>
   );
