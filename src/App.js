@@ -45,9 +45,8 @@ function App() {
   };
 
   let sendInvites = (initiator, location, date, limit, result) => {
-    console.log(result.type)
+    console.log(result.type);
     result.forEach((a) => {
-
       var templateParams = {
         initiator: initiator,
         location: location,
@@ -57,7 +56,12 @@ function App() {
         to: a.santa.email,
       };
 
-      console.log("emailing" + templateParams.to + " their recipient is " + a.receiver.name)
+      console.log(
+        "emailing" +
+          templateParams.to +
+          " their recipient is " +
+          a.receiver.name
+      );
 
       emailjs
         .send(
@@ -89,106 +93,110 @@ function App() {
   return (
     <div className="App">
       <Container>
+        <Row><h1>Secret Santa Creator</h1></Row>
         <Row>
-          <Col>1 of 1</Col>
+          <Col>
+            {" "}
+            <Form onSubmit={(e) => handleSubmit(e)}>
+              <Form.Group className="mb-3" controlId="initiatorName">
+                <Form.Label>Initiators Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter your name"
+                  value={initiator}
+                  onChange={(e) => setInitiator(e.target.value)}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="eventDate">
+                <Form.Label>Date of gift exchange</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="eventLocation">
+                <Form.Label>location of gift exchange</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="spendingAmount">
+                <Form.Label>Maximum amount to spend</Form.Label>
+                <Form.Text>${limit.toString()}</Form.Text>
+                <Form.Range
+                  value={limit}
+                  min="20"
+                  max="200"
+                  onChange={(e) => handleRangeChange(e)}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="Attendees">
+                {attendees.map((attendee, index) => {
+                  return (
+                    <InputGroup className="mb-3" key={index}>
+                      <InputGroup.Text>Name and Email</InputGroup.Text>
+                      <Form.Control
+                        aria-label="name"
+                        name="name"
+                        placeholder="name"
+                        defaultValue={attendee.name || ""}
+                        onChange={(e) => handleChange(index, e)}
+                      />
+                      <Form.Control
+                        key={index}
+                        aria-label="email"
+                        placeholder="email"
+                        name="email"
+                        defaultValue={attendee.email || ""}
+                        onChange={(e) => handleChange(index, e)}
+                      />
+
+                      {index < 2 ? (
+                        <Button
+                          variant="outline-danger"
+                          type="submit"
+                          onClick={(e) => removeFormFields(index, e)}
+                          disabled
+                        >
+                          Remove
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline-danger"
+                          type="submit"
+                          onClick={(e) => removeFormFields(index, e)}
+                        >
+                          Remove
+                        </Button>
+                      )}
+                    </InputGroup>
+                  );
+                })}
+                <Button
+                  variant="primary"
+                  type="submit"
+                  onClick={(e) => addFormFields(e)}
+                >
+                  +
+                </Button>
+              </Form.Group>
+            </Form>
+          </Col>
+        </Row>
+        <Row>
+          {" "}
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
         </Row>
       </Container>
-
-      <Form onSubmit={(e) => handleSubmit(e)}>
-        <Form.Group className="mb-3" controlId="initiatorName">
-          <Form.Label>Initiators Name</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter your name"
-            value={initiator}
-            onChange={(e) => setInitiator(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="eventDate">
-          <Form.Label>Date of gift exchange</Form.Label>
-          <Form.Control
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="eventLocation">
-          <Form.Label>location of gift exchange</Form.Label>
-          <Form.Control
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="spendingAmount">
-          <Form.Label>Maximum amount to spend</Form.Label>
-          <Form.Text>${limit.toString()}</Form.Text>
-          <Form.Range
-            value={limit}
-            min="20"
-            max="200"
-            onChange={(e) => handleRangeChange(e)}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="Attendees">
-          {attendees.map((attendee, index) => {
-            return (
-              <InputGroup className="mb-3" key={index}>
-                <InputGroup.Text>Name and Email</InputGroup.Text>
-                <Form.Control
-                  aria-label="name"
-                  name="name"
-                  placeholder="name"
-                  defaultValue={attendee.name || ""}
-                  onChange={(e) => handleChange(index, e)}
-                />
-                <Form.Control
-                  key={index}
-                  aria-label="email"
-                  placeholder="email"
-                  name="email"
-                  defaultValue={attendee.email || ""}
-                  onChange={(e) => handleChange(index, e)}
-                />
-
-                {index < 2 ? (
-                  <Button
-                    variant="outline-danger"
-                    type="submit"
-                    onClick={(e) => removeFormFields(index, e)}
-                    disabled
-                  >
-                    Remove
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outline-danger"
-                    type="submit"
-                    onClick={(e) => removeFormFields(index, e)}
-                  >
-                    Remove
-                  </Button>
-                )}
-              </InputGroup>
-            );
-          })}
-        </Form.Group>
-        <Button
-          variant="primary"
-          type="submit"
-          onClick={(e) => addFormFields(e)}
-        >
-          +
-        </Button>
-
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-      </Form>
     </div>
   );
 }
