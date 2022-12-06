@@ -7,10 +7,15 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useState } from "react";
-import { SendSecretSanta } from "./sdk/SendSecretSanta.sdk";
+import emailjs from "@emailjs/browser";
+import { SendSecretSantaInvite } from "./sdk/SendSecretSantaInvite.sdk";
 
 function App() {
-  const [attendees, setAttendees] = useState([{ name: "", email: "" }]);
+  const [attendees, setAttendees] = useState([
+    { name: "Person One", email: "personone@gmail.com" },
+    { name: "Person Two", email: "persontwo@gmail.com" },
+  ]);
+
   const [limit, setLimit] = useState(0);
   const [initiator, setInitiator] = useState("");
   const [location, setLocation] = useState("");
@@ -39,12 +44,46 @@ function App() {
     setAttendees(newFormValues);
   };
 
-  let handleSubmit = (event) => {
+  let sendInvites = (initiator, location, date, limit, result) => {
+    console.log(result.type)
+    result.forEach((a) => {
+
+      var templateParams = {
+        initiator: initiator,
+        location: location,
+        date: date,
+        limit: limit,
+        attendees: attendees,
+        to: a.santa.email,
+      };
+
+      console.log("emailing" + templateParams.to + " their recipient is " + a.receiver.name)
+
+      emailjs
+        .send(
+          "service_u2p4mbv",
+          "template_vnt00kk",
+          templateParams,
+          "CLZD_47ouNXy4XSjV"
+        )
+        .then(
+          (result) => {
+            console.log(result.text);
+          },
+          (error) => {
+            console.log(error.text);
+          }
+        );
+    });
+  };
+
+  let handleSubmit = async (event) => {
     event.preventDefault();
-    //alert(JSON.stringify(initiator, location, date, limit, attendees));
-    SendSecretSanta.sendInvite(initiator, location, date, limit, attendees)
-      .then((response) => console.log(response))
-      .catch((error) => console.log(error));
+    await SendSecretSantaInvite.sendInvite(attendees)
+      .then((result) => sendInvites(initiator, location, date, limit, result))
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -94,10 +133,6 @@ function App() {
             onChange={(e) => handleRangeChange(e)}
           />
         </Form.Group>
-        <p>{JSON.stringify(initiator)}</p>
-        <p>{JSON.stringify(attendees)}</p>
-        <p>{JSON.stringify(location)}</p>
-        <p>{JSON.stringify(date)}</p>
 
         <Form.Group className="mb-3" controlId="Attendees">
           {attendees.map((attendee, index) => {
@@ -108,7 +143,7 @@ function App() {
                   aria-label="name"
                   name="name"
                   placeholder="name"
-                  defaultValue={attendee.email || ""}
+                  defaultValue={attendee.name || ""}
                   onChange={(e) => handleChange(index, e)}
                 />
                 <Form.Control
@@ -119,13 +154,25 @@ function App() {
                   defaultValue={attendee.email || ""}
                   onChange={(e) => handleChange(index, e)}
                 />
-                <Button
-                  variant="outline-danger"
-                  type="submit"
-                  onClick={(e) => removeFormFields(index, e)}
-                >
-                  Remove
-                </Button>
+
+                {index < 2 ? (
+                  <Button
+                    variant="outline-danger"
+                    type="submit"
+                    onClick={(e) => removeFormFields(index, e)}
+                    disabled
+                  >
+                    Remove
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline-danger"
+                    type="submit"
+                    onClick={(e) => removeFormFields(index, e)}
+                  >
+                    Remove
+                  </Button>
+                )}
               </InputGroup>
             );
           })}
