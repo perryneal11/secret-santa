@@ -103,9 +103,12 @@ function App() {
 
   return (
     <div className="App">
-      <Container>
+      <Container className="Content">
         <Row>
-          <h1>Secret Santa Creator{date.toString()}</h1>
+          <img src={require('/Users/perryneal/Development/Freelance/secret-santa/src/sdk/vecteezy_set-character-funny-santa-claus-isolated-for-christmas_13744479.jpg')} style={{height: '50%', borderRadius:'50%'}}></img>
+        </Row>
+        <Row >
+          <h1>Secret Santa Creator</h1>
         </Row>
         <Row>
           <Col>
@@ -198,13 +201,15 @@ function App() {
                   +
                 </Button>
               </Form.Group>
+              <Row>
               <Button variant="primary" type="submit">
                 Submit
               </Button>
+              </Row>
             </Form>
           </Col>
         </Row>
-        <Row></Row>
+
       </Container>
     </div>
   );
