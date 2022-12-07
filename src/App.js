@@ -11,14 +11,15 @@ import { send } from "./sdk/send.sdk";
 
 function App() {
   const [attendees, setAttendees] = useState([
-    { name: "Person One", email: "personone@gmail.com" },
-    { name: "Person Two", email: "persontwo@gmail.com" },
+    { name: "Person One", email: "personone@gmail.com", id: (Math.random() + 1).toString(36).substring(7)},
+    { name: "Person Two", email: "persontwo@gmail.com", id: (Math.random() + 1).toString(36).substring(7)},
   ]);
-
   const [limit, setLimit] = useState(0);
   const [initiator, setInitiator] = useState("");
   const [location, setLocation] = useState("");
   const [date, setDate] = useState(new Date());
+  const [eventID, setEventId] = useState((Math.random() + 1).toString(36).substring(7))
+  
 
   let handleChange = (i, e) => {
     let newFormValues = [...attendees];
@@ -33,7 +34,7 @@ function App() {
 
   let addFormFields = (e) => {
     e.preventDefault();
-    setAttendees([...attendees, { name: "", email: "" }]);
+    setAttendees([...attendees, { name: "", email: "" , id: (Math.random() + 1).toString(36).substring(7)}]);
   };
 
   let removeFormFields = (i, e) => {
@@ -45,7 +46,7 @@ function App() {
 
   let handleSubmit = (event) => {
     event.preventDefault();
-    send.invite(initiator, location, date, limit, attendees).then((result) => console.log(result)).catch(error => console.log(error))
+    send.invite(initiator, location, date, limit, attendees, eventID).then((result) => console.log(result)).catch(error => console.log(error))
   };
 
   return (
