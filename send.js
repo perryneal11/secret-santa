@@ -42,7 +42,7 @@ export class send {
           limit: limit,
           attendees: attendees,
           to: matches[x].santa.email,
-          link: eventID + matches[x].santa.id,
+          link: "http://localhost:3000/view/" + eventID + "/" + matches[x].santa.id,
         };
 
         console.log(
@@ -58,6 +58,6 @@ export class send {
     }
 
     const result = loop(matches)
-    return matches
+    return result
   }
 }
