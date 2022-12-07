@@ -2,10 +2,7 @@ import emailjs from "@emailjs/nodejs";
 import EmailJSResponseStatus from "@emailjs/nodejs";
 
 export class send {
-  invite(initiator, location, date, limit, attendees) {
-    
-    console.log(attendees);
-
+  invite(initiator, location, date, limit, attendees, eventID) {
     function shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -25,24 +22,19 @@ export class send {
     });
 
     async function email(templateParams) {
-      try {
-        await emailjs.send("service_u2p4mbv", "template_vnt00kk", templateParams, {
+      await emailjs.send(
+        "service_u2p4mbv",
+        "template_vnt00kk",
+        templateParams,
+        {
           publicKey: "CLZD_47ouNXy4XSjV",
           privateKey: "3V9nSeche-s_X8HCJoug8", // optional, highly recommended for security reasons
-        });
-        console.log("SUCCESS!");
-      } catch (err) {
-        if (err instanceof EmailJSResponseStatus) {
-          console.log("EMAILJS FAILED...", err);
-          return err
         }
-        console.log("ERROR", err);
-      }
+      );
     }
 
     async function loop(matches) {
-      for(let x =0; x < matches.length; x++) {
-
+      for (let x = 0; x < matches.length; x++) {
         var templateParams = {
           initiator: initiator,
           location: location,
@@ -50,26 +42,22 @@ export class send {
           limit: limit,
           attendees: attendees,
           to: matches[x].santa.email,
+          link: eventID + matches[x].santa.id,
         };
-  
+
         console.log(
           "emailing " +
             templateParams.to +
             " their recipient is " +
             matches[x].receiver.name
         );
-        
-        await email(templateParams)
-       
-      };
+
+        await email(templateParams).then((result) => console.log("weeeee"));
+      }
+      return matches
     }
-    
 
-  
-
-    return loop(matches);
-    
-
-
+    const result = loop(matches)
+    return matches
   }
 }
