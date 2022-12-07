@@ -58,6 +58,6 @@ export class send {
     }
 
     const result = loop(matches)
-    return result
+    return matches
   }
 }

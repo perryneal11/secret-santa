@@ -8,18 +8,44 @@ import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useState } from "react";
 import { send } from "./sdk/send.sdk";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getDatabase, set, ref } from "firebase/database";
 
 function App() {
   const [attendees, setAttendees] = useState([
-    { name: "Person One", email: "personone@gmail.com", id: (Math.random() + 1).toString(36).substring(7)},
-    { name: "Person Two", email: "persontwo@gmail.com", id: (Math.random() + 1).toString(36).substring(7)},
+    {
+      name: "Person One",
+      email: "personone@gmail.com",
+      id: (Math.random() + 1).toString(36).substring(7),
+    },
+    {
+      name: "Person Two",
+      email: "persontwo@gmail.com",
+      id: (Math.random() + 1).toString(36).substring(7),
+    },
   ]);
   const [limit, setLimit] = useState(0);
-  const [initiator, setInitiator] = useState("");
-  const [location, setLocation] = useState("");
+  const [initiator, setInitiator] = useState("Santa Clause");
+  const [location, setLocation] = useState("2525 The north pole lane");
   const [date, setDate] = useState(new Date());
-  const [eventID, setEventId] = useState((Math.random() + 1).toString(36).substring(7))
-  
+  const [eventID, setEventId] = useState(
+    (Math.random() + 1).toString(36).substring(7)
+  );
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5FHho9x2J-J4e-pM1V6vfyha3LnLnqvI",
+    authDomain: "secret-santa-bbe84.firebaseapp.com",
+    projectId: "secret-santa-bbe84",
+    storageBucket: "secret-santa-bbe84.appspot.com",
+    messagingSenderId: "106961082809",
+    appId: "1:106961082809:web:2bb17866e0b77c89973e68",
+    measurementId: "G-6817D884BG",
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const database = getDatabase();
 
   let handleChange = (i, e) => {
     let newFormValues = [...attendees];
@@ -34,7 +60,14 @@ function App() {
 
   let addFormFields = (e) => {
     e.preventDefault();
-    setAttendees([...attendees, { name: "", email: "" , id: (Math.random() + 1).toString(36).substring(7)}]);
+    setAttendees([
+      ...attendees,
+      {
+        name: "",
+        email: "",
+        id: (Math.random() + 1).toString(36).substring(7),
+      },
+    ]);
   };
 
   let removeFormFields = (i, e) => {
@@ -44,16 +77,35 @@ function App() {
     setAttendees(newFormValues);
   };
 
+  let firebaseWrite = (result) => {
+    set(ref(database, "events/" + eventID), {
+      initiator: initiator,
+      date: date,
+      location: location,
+      limit: limit
+    });
+    console.log(result);
+    result.forEach((r) => {
+      set(ref(database, "events/" + eventID + "/attendees/" + r.santa.id), {
+        name: r.santa.name,
+        person: r.receiver.name,
+      });
+    });
+  };
+
   let handleSubmit = (event) => {
     event.preventDefault();
-    send.invite(initiator, location, date, limit, attendees, eventID).then((result) => console.log(result)).catch(error => console.log(error))
+    send
+      .invite(initiator, location, date, limit, attendees, eventID)
+      .then((result) => firebaseWrite(result))
+      .catch((error) => console.log(error));
   };
 
   return (
     <div className="App">
       <Container>
         <Row>
-          <h1>Secret Santa Creator</h1>
+          <h1>Secret Santa Creator{date.toString()}</h1>
         </Row>
         <Row>
           <Col>
