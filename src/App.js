@@ -105,7 +105,7 @@ function App() {
     <div className="App">
       <Container className="Content">
         <Row>
-          <img src={require('/Users/perryneal/Development/Freelance/secret-santa/src/sdk/vecteezy_set-character-funny-santa-claus-isolated-for-christmas_13744479.jpg')} style={{height: '50%', borderRadius:'50%'}}></img>
+          <img src={require('./vecteezy_set-character-funny-santa-claus-isolated-for-christmas_13744479.jpg')} style={{height: '50%', borderRadius:'50%'}}></img>
         </Row>
         <Row >
           <h1>Secret Santa Creator</h1>

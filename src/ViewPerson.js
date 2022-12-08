@@ -44,7 +44,7 @@ export default function ViewPerson() {
       <Row>
         <Col>
           <Card>
-            <Card.Img style={{ width: '40rem' , alignSelf: 'center'}} variant="top" src={require('/Users/perryneal/Development/Freelance/secret-santa/src/xmas_present_013.jpg')} />
+            <Card.Img style={{ width: '40rem' , alignSelf: 'center'}} variant="top" src={require('./xmas_present_013.jpg')} />
             <Card.Body>
               <Card.Title>Your person is...</Card.Title>
               <Card.Text>{name}</Card.Text>
