@@ -77,27 +77,14 @@ function App() {
     setAttendees(newFormValues);
   };
 
-  let firebaseWrite = (result) => {
-    set(ref(database, "events/" + eventID), {
-      initiator: initiator,
-      date: date,
-      location: location,
-      limit: limit
-    });
-    console.log(result);
-    result.forEach((r) => {
-      set(ref(database, "events/" + eventID + "/attendees/" + r.santa.id), {
-        name: r.santa.name,
-        person: r.receiver.name,
-      });
-    });
-  };
+
 
   let handleSubmit = (event) => {
     event.preventDefault();
     send
       .invite(initiator, location, date, limit, attendees, eventID)
-      .then((result) => firebaseWrite(result))
+      .then((result) => console.log(result))
+      .then(alert("Your event has been created!"))
       .catch((error) => console.log(error));
   };
 
@@ -105,7 +92,7 @@ function App() {
     <div className="App">
       <Container className="Content">
         <Row>
-          <img src={require('/Users/perryneal/Development/Freelance/secret-santa/src/sdk/vecteezy_set-character-funny-santa-claus-isolated-for-christmas_13744479.jpg')} style={{height: '50%', borderRadius:'50%'}}></img>
+          <img src={require('./vecteezy_set-character-funny-santa-claus-isolated-for-christmas_13744479.jpg')} style={{height: '50%', borderRadius:'50%'}}></img>
         </Row>
         <Row >
           <h1>Secret Santa Creator</h1>
