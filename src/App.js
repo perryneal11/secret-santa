@@ -77,27 +77,14 @@ function App() {
     setAttendees(newFormValues);
   };
 
-  let firebaseWrite = (result) => {
-    set(ref(database, "events/" + eventID), {
-      initiator: initiator,
-      date: date,
-      location: location,
-      limit: limit
-    });
-    console.log(result);
-    result.forEach((r) => {
-      set(ref(database, "events/" + eventID + "/attendees/" + r.santa.id), {
-        name: r.santa.name,
-        person: r.receiver.name,
-      });
-    });
-  };
+
 
   let handleSubmit = (event) => {
     event.preventDefault();
     send
       .invite(initiator, location, date, limit, attendees, eventID)
       .then((result) => console.log(result))
+      .then(alert("Your event has been created!"))
       .catch((error) => console.log(error));
   };
 
