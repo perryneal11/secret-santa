@@ -97,7 +97,7 @@ function App() {
     event.preventDefault();
     send
       .invite(initiator, location, date, limit, attendees, eventID)
-      .then((result) => firebaseWrite(result))
+      .then((result) => console.log(result))
       .catch((error) => console.log(error));
   };
 
